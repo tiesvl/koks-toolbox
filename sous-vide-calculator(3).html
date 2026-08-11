@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sous-vide Calculator</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f5f5;color:#171717}
+.wrap{max-width:520px;margin:0 auto;padding:28px 18px 40px}.card{background:white;border-radius:22px;padding:24px;box-shadow:0 8px 30px #00000012}
+h1{margin:0 0 6px;font-size:28px}.sub{margin:0 0 24px;color:#666}
+label{display:block;font-weight:700;margin:16px 0 7px}select,input{width:100%;padding:13px 14px;border:1px solid #ddd;border-radius:12px;font-size:16px;background:#fff}
+button{width:100%;margin-top:22px;padding:15px;border:0;border-radius:13px;font-size:17px;font-weight:800;background:#171717;color:white;cursor:pointer}
+.result{display:none;margin-top:22px;padding:20px;border-radius:16px;background:#f0f0f0}.result.show{display:block}.big{font-size:32px;font-weight:900;margin:4px 0 12px}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #ddd}.row:last-child{border:0}
+.note{font-size:13px;color:#666;margin-top:16px;line-height:1.45}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+<h1>🥩 Sous-vide Calculator</h1>
+<p class="sub">Vul je biefstuk in en krijg direct temperatuur en tijd.</p>
+
+<label for="type">Soort biefstuk</label>
+<input id="type" type="text" placeholder="Bijv. ossenhaas, ribeye, picanha...">
+
+<label for="thickness">Dikte (cm)</label>
+<input id="thickness" type="number" min="0.5" max="15" step="0.1" placeholder="Bijv. 5">
+
+<label for="weight">Gewicht (gram)</label>
+<input id="weight" type="number" min="1" step="1" placeholder="Bijv. 300">
+
+<label for="doneness">Gaarheid</label>
+<select id="doneness">
+<option value="rare">Rare</option><option value="mr">Medium rare</option>
+<option value="medium">Medium</option><option value="mw">Medium well</option>
+<option value="well">Well done</option>
+</select>
+
+<button onclick="calculate()">Bereken</button>
+
+<div id="result" class="result">
+<div>Jouw resultaat</div>
+<div class="big" id="temp"></div>
+<div class="row"><span>⏱️ Tijd</span><strong id="time"></strong></div>
+<div class="row"><span>🥩 Vlees</span><strong id="meat"></strong></div>
+<div class="row"><span>📏 Dikte</span><strong id="thick"></strong></div>
+</div>
+<p class="note">De dikte is de belangrijkste factor voor de sous-vide tijd. Gewicht wordt daarom niet gebruikt om de tijd kunstmatig te verlengen.</p>
+</div></div>
+
+<script>
+const temps={rare:52,mr:54.5,medium:58,mw:62,well:66};
+function calculate(){
+ const t=parseFloat(document.getElementById('thickness').value);
+ if(!t||t<=0){alert('Vul eerst de dikte in.');return}
+ const doneness=document.getElementById('doneness').value;
+ let minutes;
+ // Practical starting times for a single steak, based primarily on thickness.
+ if(t<=2){minutes=60}
+ else if(t<=2.5){minutes=75}
+ else if(t<=3){minutes=90}
+ else if(t<=3.5){minutes=105}
+ else if(t<=4){minutes=120}
+ else if(t<=4.5){minutes=150}
+ else if(t<=5){minutes=180}
+ else if(t<=6){minutes=210}
+ else if(t<=7){minutes=240}
+ else {minutes=270}
+ const h=Math.floor(minutes/60), m=minutes%60;
+ document.getElementById('temp').textContent=temps[doneness].toLocaleString('nl-NL',{maximumFractionDigits:1})+' °C';
+ document.getElementById('time').textContent=h+' uur'+(m?' '+m+' min':'');
+ document.getElementById('meat').textContent=document.getElementById('type').value;
+ document.getElementById('thick').textContent=t.toLocaleString('nl-NL')+' cm';
+ document.getElementById('result').classList.add('show');
+}
+</script>
+</body>
+</html>
